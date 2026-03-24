@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/001-create-notification-templates.yaml
+  - include:
+      file: db/changelog/002-create-webhook-subscriptions.yaml
+  - include:
+      file: db/changelog/003-create-notification-deliveries.yaml

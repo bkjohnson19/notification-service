@@ -1,0 +1,65 @@
+version: 2
+registries:
+  artifact-registry:
+    type: maven-repository
+    url: https://us-maven.pkg.dev/bkjohnson/maven
+    username: _json_key
+    password: ${{ secrets.GCR_SVC_ACCT }}
+  artifact-registry-snapshots:
+    type: maven-repository
+    url: https://us-maven.pkg.dev/bkjohnson/maven-snapshots
+    username: _json_key
+    password: ${{ secrets.GCR_SVC_ACCT }}
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    registries:
+      - artifact-registry
+      - artifact-registry-snapshots
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    groups:
+      spring-boot:
+        patterns:
+          - "org.springframework*"
+      azure:
+        patterns:
+          - "com.azure*"
+          - "com.microsoft*"
+      foundation:
+        patterns:
+          - "dev.bkjohnson*"
+      testing:
+        patterns:
+          - "org.junit*"
+          - "org.assertj*"
+          - "org.testcontainers*"
+          - "org.mockito*"
+          - "org.wiremock*"
+      observability:
+        patterns:
+          - "io.opentelemetry*"
+          - "io.micrometer*"
+    labels:
+      - "dependencies"
+      - "automated"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "automated"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "automated"

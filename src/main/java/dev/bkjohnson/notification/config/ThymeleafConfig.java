@@ -1,0 +1,24 @@
+package dev.bkjohnson.notification.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
+
+/**
+ * Configures Thymeleaf for rendering templates stored in the database.
+ */
+@Configuration
+public class ThymeleafConfig {
+
+  @Bean
+  public SpringTemplateEngine notificationTemplateEngine() {
+    SpringTemplateEngine engine = new SpringTemplateEngine();
+    StringTemplateResolver resolver = new StringTemplateResolver();
+    resolver.setTemplateMode(TemplateMode.HTML);
+    resolver.setCacheable(false);
+    engine.setTemplateResolver(resolver);
+    return engine;
+  }
+}

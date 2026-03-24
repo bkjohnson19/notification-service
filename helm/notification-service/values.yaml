@@ -1,0 +1,66 @@
+replicaCount: 2
+
+image:
+  repository: notification-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: notification-service.internal
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+env:
+  SPRING_PROFILES_ACTIVE: "prod"
+  DB_HOST: "postgresql.database.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "notifications"
+
+secrets:
+  - name: notification-service-secrets
+    keys:
+      - DB_PASSWORD
+      - DB_USER
+      - ACS_CONNECTION_STRING
+      - SERVICEBUS_CONNECTION_STRING
+      - AZURE_CLIENT_ID
+      - AZURE_TENANT_ID
+      - APPCONFIG_ENDPOINT
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8080
+  initialDelaySeconds: 15
+  periodSeconds: 5
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

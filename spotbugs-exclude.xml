@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude OpenAPI generated code -->
+    <Match>
+        <Package name="dev.bkjohnson.notification.api"/>
+    </Match>
+    <Match>
+        <Package name="dev.bkjohnson.notification.api.model"/>
+    </Match>
+    <!-- Exclude Spring Boot application entry point -->
+    <Match>
+        <Class name="dev.bkjohnson.notification.NotificationServiceApplication"/>
+    </Match>
+    <!-- JPA entities use mutable references by design (managed by persistence context) -->
+    <Match>
+        <Package name="dev.bkjohnson.notification.model.entity"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+    <!-- Spring-managed services store injected dependencies (immutable after construction) -->
+    <Match>
+        <Package name="dev.bkjohnson.notification.service"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Package name="dev.bkjohnson.notification.dispatch"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Package name="dev.bkjohnson.notification.controller"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <!-- Spring @ConfigurationProperties are mutable by design for property binding -->
+    <Match>
+        <Package name="dev.bkjohnson.notification.config"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+    <!-- String.toLowerCase() used for safe hostname comparison, not locale-sensitive -->
+    <Match>
+        <Class name="dev.bkjohnson.notification.security.SsrfValidator"/>
+        <Bug pattern="DM_CONVERT_CASE"/>
+    </Match>
+</FindBugsFilter>

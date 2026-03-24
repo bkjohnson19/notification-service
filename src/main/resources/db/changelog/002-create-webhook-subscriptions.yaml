@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-webhook-subscriptions
+      author: platform-team
+      changes:
+        - createTable:
+            tableName: webhook_subscriptions
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: callback_url
+                  type: varchar(2048)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: secret_encrypted
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_types
+                  type: jsonb
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: updated_by
+                  type: varchar(255)
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_by
+                  type: varchar(255)
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: webhook_subscriptions
+            indexName: idx_webhook_sub_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+        - createIndex:
+            tableName: webhook_subscriptions
+            indexName: idx_webhook_sub_active
+            columns:
+              - column:
+                  name: active

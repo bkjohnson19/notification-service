@@ -1,0 +1,87 @@
+api:
+  auth:
+    enabled: true
+    require-apim-gateway: true
+    public-paths:
+      - /actuator/health
+      - /actuator/info
+  cache:
+    enabled: true
+  rate-limit:
+    enabled: true
+  idempotency:
+    enabled: true
+  audit:
+    enabled: true
+  events:
+    enabled: true
+    default-channel: notification-events
+  openapi:
+    enabled: true
+    title: Notification Service
+    description: Shared platform service for email and webhook notifications
+  response:
+    include-request-id: true
+    include-timestamp: true
+  versioning:
+    current-version: v1
+    minimum-version: v1
+  pagination:
+    default-page-size: 20
+    max-page-size: 100
+  feature-flags:
+    store: azure-app-configuration
+    endpoint: ${APPCONFIG_ENDPOINT:}
+    label: ${SPRING_PROFILES_ACTIVE:dev}
+
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:notifications}
+    username: ${DB_USER:notifications}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        credential:
+          client-id: ${AZURE_CLIENT_ID:}
+        profile:
+          tenant-id: ${AZURE_TENANT_ID:}
+          app-id-uri: api://notification-service
+
+notification:
+  feature:
+    bulk-send-enabled: false
+    dry-run-mode: false
+  email:
+    connection-string: ${ACS_CONNECTION_STRING:}
+    sender-address: ${ACS_SENDER_ADDRESS:noreply@notifications.example.com}
+  webhook:
+    connect-timeout-ms: 5000
+    read-timeout-ms: 10000
+    max-retries: 5
+
+messaging:
+  servicebus:
+    connection-string: ${SERVICEBUS_CONNECTION_STRING:}
+    queue-name: notification-delivery
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
